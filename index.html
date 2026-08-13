@@ -1,442 +1,281 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>AWC Roulette</title>
-        <style>
-            body {
-                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-                background-color: #f7f9fc;
-                color: #333;
-                padding: 20px;
-                display: flex;
-                justify-content: center;
-            }
-            .container {
-                background: white;
-                padding: 30px;
-                border-radius: 12px;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-                width: 100%;
-                max-width: 500px;
-            }
-            h1 {
-                text-align: center;
-                color: #2c3e50;
-                margin-top: 0;
-            }
-            .form-group {
-                margin-bottom: 20px;
-            }
-            label {
-                font-weight: bold;
-                display: block;
-                margin-bottom: 8px;
-            }
-            .checkbox-group label {
-                display: inline-block;
-                font-weight: normal;
-                margin-right: 15px;
-                cursor: pointer;
-            }
-            input[type="number"] {
-                width: 100px;
-                padding: 8px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-            }
-            textarea {
-                width: 100%;
-                padding: 8px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                resize: vertical;
-                font-family: monospace;
-            }
-            button {
-                width: 100%;
-                padding: 15px;
-                background-color: #3498db;
-                color: white;
-                border: none;
-                border-radius: 8px;
-                font-size: 1.1em;
-                font-weight: bold;
-                cursor: pointer;
-                transition: background-color 0.2s;
-            }
-            button:hover {
-                background-color: #2980b9;
-            }
-            .result-box {
-                margin-top: 30px;
-                padding: 20px;
-                background-color: #ecf0f1;
-                border-radius: 8px;
-                text-align: center;
-                min-height: 40px;
-            }
-            .result-text {
-                font-size: 2em;
-                font-weight: bold;
-                color: #e74c3c;
-                margin: 0;
-            }
-            .help-text {
-                font-size: 0.85em;
-                color: #7f8c8d;
-                margin-top: 4px;
-            }
-            .result-text a {
-                color: #e74c3c;
-                text-decoration: none;
-                display: block; /* 複数並んだ時に改行させる */
-            }
-            .result-text a:hover {
-                text-decoration: underline;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>AWC Roulette</h1>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWC Roulette</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7f9fc;
+      color: #333;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-top: 0;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .checkbox-group label {
+      display: inline-block;
+      font-weight: normal;
+      margin-right: 15px;
+      cursor: pointer;
+    }
+    input[type="number"] {
+      width: 100px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: vertical;
+      font-family: monospace;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    .result-box {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #ecf0f1;
+      border-radius: 8px;
+      text-align: center;
+      min-height: 40px;
+    }
+    .result-text {
+      font-size: 2em;
+      font-weight: bold;
+      color: #e74c3c;
+      margin: 0;
+    }
+    .result-text a {
+      color: #e74c3c;
+      text-decoration: none;
+      display: block;
+    }
+    .result-text a:hover {
+      text-decoration: underline;
+    }
+    .help-text {
+      font-size: 0.85em;
+      color: #7f8c8d;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>AWC Roulette</h1>
 
-            <div class="form-group">
-                <label>ピックする問題:</label>
-                <div class="checkbox-group">
-                    <label
-                        ><input
-                            type="checkbox"
-                            class="diff-check"
-                            value="A"
-                            checked
-                        />
-                        A</label
-                    >
-                    <label
-                        ><input
-                            type="checkbox"
-                            class="diff-check"
-                            value="B"
-                            checked
-                        />
-                        B</label
-                    >
-                    <label
-                        ><input
-                            type="checkbox"
-                            class="diff-check"
-                            value="C"
-                            checked
-                        />
-                        C</label
-                    >
-                    <label
-                        ><input
-                            type="checkbox"
-                            class="diff-check"
-                            value="D"
-                            checked
-                        />
-                        D</label
-                    >
-                    <label
-                        ><input
-                            type="checkbox"
-                            class="diff-check"
-                            value="E"
-                            checked
-                        />
-                        E</label
-                    >
-                </div>
-            </div>
+    <div class="form-group">
+      <label>ピックする問題:</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" class="diff-check" value="A" checked /> A</label>
+        <label><input type="checkbox" class="diff-check" value="B" checked /> B</label>
+        <label><input type="checkbox" class="diff-check" value="C" checked /> C</label>
+        <label><input type="checkbox" class="diff-check" value="D" checked /> D</label>
+        <label><input type="checkbox" class="diff-check" value="E" checked /> E</label>
+      </div>
+    </div>
 
-            <div class="form-group">
-                <label for="max-contest">最大のコンテスト番号:</label>
-                <input type="number" id="max-contest" value="1" min="1" />
-                <div class="help-text">
-                    例: 100 と入力すると AWC0001〜AWC0100 が対象になります
-                </div>
-            </div>
+    <div class="form-group">
+      <label for="max-contest">最大のコンテスト番号:</label>
+      <input type="number" id="max-contest" value="1" min="1" />
+      <div class="help-text">例: 100 と入力すると AWC0001〜AWC0100 が対象になります</div>
+    </div>
 
-            <div class="form-group">
-                <label for="pick-count"
-                    >ピックする問題数:
-                    <span id="pick-count-display">1</span></label
-                >
-                <input
-                    type="range"
-                    id="pick-count"
-                    min="1"
-                    max="5"
-                    value="1"
-                    step="1"
-                    style="width: 100%"
-                />
-            </div>
+    <div class="form-group">
+      <label for="pick-count">
+        ピックする問題数: <span id="pick-count-display">1</span>
+      </label>
+      <input type="range" id="pick-count" min="1" max="5" value="1" step="1" style="width: 100%" />
+    </div>
 
-            <div class="form-group">
-                <label for="exclusions">除外設定:</label>
-                <textarea
-                    id="exclusions"
-                    rows="4"
-                    placeholder="100 *&#10;108 d"
-                >
-100 *
-108 d</textarea
-                >
-                <div class="help-text">
-                    書式: [コンテスト番号 問題] (※大文字小文字は区別しません)
-                </div>
-            </div>
+    <div class="form-group">
+      <label for="exclusions">除外設定:</label>
+      <textarea id="exclusions" rows="4" placeholder="100 *&#10;108 d">100 *
+108 d</textarea>
+      <div class="help-text">書式: [コンテスト番号 問題] (※大文字小文字は区別しません)</div>
+    </div>
 
-            <button id="spin-btn">ルーレットを回す</button>
+    <button id="spin-btn">ルーレットを回す</button>
 
-            <div class="result-box">
-                <p class="result-text" id="result-display">???</p>
-            </div>
-        </div>
+    <div class="result-box">
+      <p class="result-text" id="result-display">???</p>
+    </div>
+  </div>
 
-        <script>
-            const START_DATE = new Date("2026-02-09T00:00:00");
+  <script>
+    const START_DATE = new Date("2026-02-09T00:00:00");
 
-            function calculateCurrentAWC() {
-                const now = new Date();
+    function calculateCurrentAWC() {
+      const now = new Date();
+      const start0 = new Date(START_DATE.getFullYear(), START_DATE.getMonth(), START_DATE.getDate());
+      const today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-                // START_DATE（月曜）から「今日」の0:00までの日数差を計算
-                const start0 = new Date(
-                    START_DATE.getFullYear(),
-                    START_DATE.getMonth(),
-                    START_DATE.getDate()
-                );
-                const today0 = new Date(
-                    now.getFullYear(),
-                    now.getMonth(),
-                    now.getDate()
-                );
+      const diffDays = Math.floor((today0 - start0) / (1000 * 60 * 60 * 24));
+      if (diffDays < 0) return 1;
 
-                const diffDays = Math.floor(
-                    (today0 - start0) / (1000 * 60 * 60 * 24)
-                );
-                if (diffDays < 0) return 1;
+      const fullWeeks = Math.floor(diffDays / 7);
+      const remainingDays = diffDays % 7;
 
-                // 完全な週（7日）の数と、余りの日数を計算
-                const fullWeeks = Math.floor(diffDays / 7);
-                const remainingDays = diffDays % 7; // 0:月, 1:火, 2:水, 3:木, 4:金, 5:土, 6:日
+      let count = fullWeeks * 5 + Math.min(remainingDays, 5);
+      if (remainingDays < 5 && now.getHours() >= 21) {
+        count++;
+      }
+      return count > 0 ? count : 1;
+    }
 
-                // 1. 過去の完全な週に含まれる平日数（1週あたり5日）
-                let count = fullWeeks * 5;
+    function saveCheckboxState() {
+      const checkedDiffs = Array.from(document.querySelectorAll(".diff-check:checked")).map((cb) => cb.value);
+      localStorage.setItem("awc_selected_diffs", JSON.stringify(checkedDiffs));
+    }
 
-                // 2. 今週の余り日数に含まれる過去の平日数（最大で月〜金までの5日）
-                count += Math.min(remainingDays, 5);
+    function updatePickCountDisplay(count) {
+      document.getElementById("pick-count-display").textContent = count;
+      const resultDisplay = document.getElementById("result-display");
+      const questionMarks = Array(parseInt(count, 10)).fill("???");
+      resultDisplay.innerHTML = questionMarks.map((q) => `<div>${q}</div>`).join("");
+    }
 
-                // 3. 今日が平日（月〜金: remainingDays 0〜4）かつ 21:00 以降なら今日の分を追加
-                if (remainingDays < 5 && now.getHours() >= 21) {
-                    count++;
-                }
+    // 初期化処理
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("max-contest").value = calculateCurrentAWC();
 
-                return count > 0 ? count : 1;
-            }
+      const savedDiffs = localStorage.getItem("awc_selected_diffs");
+      if (savedDiffs) {
+        try {
+          const selectedArray = JSON.parse(savedDiffs);
+          document.querySelectorAll(".diff-check").forEach((cb) => {
+            cb.checked = selectedArray.includes(cb.value);
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
 
-            document.addEventListener("DOMContentLoaded", () => {
-                // 1. 最大コンテスト番号の自動計算
-                const calculatedNum = calculateCurrentAWC();
-                document.getElementById("max-contest").value = calculatedNum;
+      document.querySelectorAll(".diff-check").forEach((cb) => {
+        cb.addEventListener("change", saveCheckboxState);
+      });
 
-                // 2. チェックボックス状態の復元 (追加)
-                const savedDiffs = localStorage.getItem("awc_selected_diffs");
-                if (savedDiffs) {
-                    try {
-                        const selectedArray = JSON.parse(savedDiffs);
-                        document
-                            .querySelectorAll(".diff-check")
-                            .forEach((cb) => {
-                                cb.checked = selectedArray.includes(cb.value);
-                            });
-                    } catch (e) {
-                        console.error(
-                            "保存された設定の読み込みに失敗しました",
-                            e
-                        );
-                    }
-                }
+      const savedPickCount = localStorage.getItem("awc_pick_count");
+      if (savedPickCount) {
+        document.getElementById("pick-count").value = savedPickCount;
+      }
 
-                // 3. チェックボックス変更時に自動保存するイベントを追加 (追加)
-                document.querySelectorAll(".diff-check").forEach((cb) => {
-                    cb.addEventListener("change", saveCheckboxState);
-                });
+      updatePickCountDisplay(document.getElementById("pick-count").value);
+    });
 
-                // 4. スライダーの値の復元（追加）
-                const savedPickCount = localStorage.getItem("awc_pick_count");
-                if (savedPickCount) {
-                    document.getElementById("pick-count").value =
-                        savedPickCount;
-                }
+    // スライダー操作イベント
+    document.getElementById("pick-count").addEventListener("input", (e) => {
+      const val = e.target.value;
+      updatePickCountDisplay(val);
+      localStorage.setItem("awc_pick_count", val);
+    });
 
-                // 5. 表示の初期化（復元したスライダーの値をもとに表示）
-                const initialPickCount =
-                    document.getElementById("pick-count").value;
-                updatePickCountDisplay(initialPickCount);
-            });
+    // ルーレット実行処理
+    document.getElementById("spin-btn").addEventListener("click", () => {
+      const checkedDiffs = Array.from(document.querySelectorAll(".diff-check:checked")).map((cb) => cb.value);
+      const maxContestNum = parseInt(document.getElementById("max-contest").value, 10);
+      const numToPick = parseInt(document.getElementById("pick-count").value, 10);
+      const exclusionsText = document.getElementById("exclusions").value;
 
-            // チェックボックスの状態を localStorage に保存する関数 (追加)
-            function saveCheckboxState() {
-                const checkedDiffs = Array.from(
-                    document.querySelectorAll(".diff-check:checked")
-                ).map((cb) => cb.value);
-                localStorage.setItem(
-                    "awc_selected_diffs",
-                    JSON.stringify(checkedDiffs)
-                );
-            }
-            // スライダーの数値をリアルタイムに表示
-            document
-                .getElementById("pick-count")
-                .addEventListener("input", (e) => {
-                    const val = e.target.value;
-                    document.getElementById("pick-count-display").textContent =
-                        val;
-                    updatePickCountDisplay(val);
-                    // スライダーの値を保存
-                    localStorage.setItem("awc_pick_count", val);
-                });
+      if (checkedDiffs.length === 0) {
+        alert("少なくとも1つの問題（A〜E）にチェックを入れてください。");
+        return;
+      }
+      if (isNaN(maxContestNum) || maxContestNum < 1) {
+        alert("正しいコンテスト番号を入力してください。");
+        return;
+      }
 
-            // スライダーの数値をリアルタイムに表示し、結果表示の ??? も連動させる関数
-            function updatePickCountDisplay(count) {
-                document.getElementById("pick-count-display").textContent =
-                    count;
+      const exclusions = {};
+      const regex = /\s*(\d+)\s+([a-zA-Z\*])\s*/g;
+      let match;
+      while ((match = regex.exec(exclusionsText)) !== null) {
+        const contestNum = parseInt(match[1], 10);
+        const targetStr = match[2].toUpperCase();
+        if (!exclusions[contestNum]) exclusions[contestNum] = [];
+        exclusions[contestNum].push(targetStr);
+      }
 
-                // ルーレットを回す前の初期状態（???）の数を問題数に合わせる
-                const resultDisplay = document.getElementById("result-display");
-                const questionMarks = Array(parseInt(count, 10)).fill("???");
-                resultDisplay.innerHTML = questionMarks
-                    .map((q) => `<div>${q}</div>`)
-                    .join("");
-            }
+      const pool = [];
+      for (let i = 1; i <= maxContestNum; i++) {
+        if (exclusions[i] && exclusions[i].includes("*")) continue;
 
-            // スライダー変更時のイベント
-            document
-                .getElementById("pick-count")
-                .addEventListener("input", (e) => {
-                    updatePickCountDisplay(e.target.value);
-                });
-            document
-                .getElementById("spin-btn")
-                .addEventListener("click", () => {
-                    // 1. 設定値の取得
-                    const checkedDiffs = Array.from(
-                        document.querySelectorAll(".diff-check:checked")
-                    ).map((cb) => cb.value);
-                    const maxContestNum = parseInt(
-                        document.getElementById("max-contest").value,
-                        10
-                    );
-                    const numToPick = parseInt(
-                        document.getElementById("pick-count").value,
-                        10
-                    );
-                    const exclusionsText =
-                        document.getElementById("exclusions").value;
+        for (let diff of checkedDiffs) {
+          if (exclusions[i] && exclusions[i].includes(diff)) continue;
 
-                    if (checkedDiffs.length === 0) {
-                        alert(
-                            "少なくとも1つの問題（A〜E）にチェックを入れてください。"
-                        );
-                        return;
-                    }
-                    if (isNaN(maxContestNum) || maxContestNum < 1) {
-                        alert("正しいコンテスト番号を入力してください。");
-                        return;
-                    }
+          const numStr = String(i).padStart(4, "0");
+          pool.push({
+            text: `AWC${numStr} ${diff}`,
+            url: `https://atcoder.jp/contests/awc${numStr}/tasks/awc${numStr}_${diff.toLowerCase()}`
+          });
+        }
+      }
 
-                    // 2. 除外コマンドのパース処理
-                    // 例: "[100 *]" や "[108 d]" を抽出
-                    const exclusions = {};
-                    const regex = /\s*(\d+)\s+([a-zA-Z\*])\s*/g;
-                    let match;
-                    while ((match = regex.exec(exclusionsText)) !== null) {
-                        const contestNum = parseInt(match[1], 10);
-                        const targetStr = match[2].toUpperCase(); // d を D に変換して統一
+      if (pool.length < numToPick) {
+        alert(`条件に合致する問題が足りません（候補: ${pool.length}問）。設定を見直してください。`);
+        return;
+      }
 
-                        if (!exclusions[contestNum]) {
-                            exclusions[contestNum] = [];
-                        }
-                        exclusions[contestNum].push(targetStr);
-                    }
+      const resultDisplay = document.getElementById("result-display");
+      const button = document.getElementById("spin-btn");
+      button.disabled = true;
 
-                    // 3. 抽選プールの作成
-                    const pool = [];
-                    for (let i = 1; i <= maxContestNum; i++) {
-                        // [100 *] のように、その回全体が除外されているかチェック
-                        if (exclusions[i] && exclusions[i].includes("*")) {
-                            continue;
-                        }
+      const getPicks = () => [...pool].sort(() => 0.5 - Math.random()).slice(0, numToPick);
 
-                        // 選択された各問題(A~E)についてプールに追加できるかチェック
-                        for (let diff of checkedDiffs) {
-                            // [108 D] のように、特定の回の特定の問題が除外されているかチェック
-                            if (exclusions[i] && exclusions[i].includes(diff)) {
-                                continue;
-                            }
+      let count = 0;
+      const maxCount = 20;
 
-                            // 4桁のゼロ埋めを作成 (例: 133 -> 0133)
-                            const numStr = String(i).padStart(4, "0");
-                            const diffLower = diff.toLowerCase();
-                            const url = `https://atcoder.jp/contests/awc${numStr}/tasks/awc${numStr}_${diffLower}`;
-                            pool.push({
-                                text: `AWC${numStr} ${diff}`,
-                                url: url
-                            });
-                        }
-                    }
+      const interval = setInterval(() => {
+        resultDisplay.innerHTML = getPicks().map((p) => `<div>${p.text}</div>`).join("");
+        count++;
 
-                    if (pool.length < numToPick) {
-                        alert(
-                            `条件に合致する問題が足りません（候補: ${pool.length}問）。設定を見直してください。`
-                        );
-                        return;
-                    }
-
-                    // 4. ルーレット演出
-                    const resultDisplay =
-                        document.getElementById("result-display");
-                    const button = document.getElementById("spin-btn");
-                    button.disabled = true;
-
-                    // 配列をシャッフルして指定数取り出す関数
-                    const getPicks = () => {
-                        return [...pool]
-                            .sort(() => 0.5 - Math.random())
-                            .slice(0, numToPick);
-                    };
-
-                    let count = 0;
-                    const maxCount = 20;
-
-                    const interval = setInterval(() => {
-                        const picks = getPicks();
-                        // 演出中はリンク無しのテキストとして表示
-                        resultDisplay.innerHTML = picks
-                            .map((p) => `<div>${p.text}</div>`)
-                            .join("");
-                        count++;
-
-                        if (count > maxCount) {
-                            clearInterval(interval);
-                            // 最終結果の決定とリンク(aタグ)の生成
-                            const finalPicks = getPicks();
-                            resultDisplay.innerHTML = finalPicks
-                                .map(
-                                    (p) =>
-                                        `<a href="${p.url}" target="_blank" rel="noopener noreferrer">${p.text}</a>`
-                                )
-                                .join("");
-                            button.disabled = false;
-                        }
-                    }, 50);
-                });
-        </script>
-    </body>
+        if (count > maxCount) {
+          clearInterval(interval);
+          resultDisplay.innerHTML = getPicks().map((p) =>
+            `<a href="${p.url}" target="_blank" rel="noopener noreferrer">${p.text}</a>`
+          ).join("");
+          button.disabled = false;
+        }
+      }, 50);
+    });
+  </script>
+</body>
 </html>
