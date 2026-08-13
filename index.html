@@ -155,9 +155,9 @@
 
             <div class="form-group">
                 <label for="max-contest">最大のコンテスト番号:</label>
-                <input type="number" id="max-contest" value="133" min="1" />
+                <input type="number" id="max-contest" value="1" min="1" />
                 <div class="help-text">
-                    例: 133 と入力すると AWC0001〜AWC0133 が対象になります
+                    例: 100 と入力すると AWC0001〜AWC0100 が対象になります
                 </div>
             </div>
 
@@ -200,6 +200,30 @@
         </div>
 
         <script>
+            const START_DATE = new Date("2026-02-09T00:00:00");
+
+            function calculateCurrentAWC() {
+                const now = new Date();
+                let count = 0;
+                let cur = new Date(START_DATE);
+
+                // 開始日から今日までの「平日（月〜金）」の数をカウント
+                while (cur <= now) {
+                    const day = cur.getDay();
+                    if (day !== 0 && day !== 6) {
+                        // 土日を除外
+                        count++;
+                    }
+                    cur.setDate(cur.getDate() + 1);
+                }
+                return count > 0 ? count : 1;
+            }
+
+            // ページ読み込み時に初期値をセット
+            document.addEventListener("DOMContentLoaded", () => {
+                const calculatedNum = calculateCurrentAWC();
+                document.getElementById("max-contest").value = calculatedNum;
+            });
             // スライダーの数値をリアルタイムに表示
             document
                 .getElementById("pick-count")
