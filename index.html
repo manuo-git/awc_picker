@@ -240,11 +240,45 @@
                 return count > 0 ? count : 1;
             }
 
-            // ページ読み込み時に初期値をセット
             document.addEventListener("DOMContentLoaded", () => {
+                // 1. 最大コンテスト番号の自動計算
                 const calculatedNum = calculateCurrentAWC();
                 document.getElementById("max-contest").value = calculatedNum;
+
+                // 2. チェックボックス状態の復元 (追加)
+                const savedDiffs = localStorage.getItem("awc_selected_diffs");
+                if (savedDiffs) {
+                    try {
+                        const selectedArray = JSON.parse(savedDiffs);
+                        document
+                            .querySelectorAll(".diff-check")
+                            .forEach((cb) => {
+                                cb.checked = selectedArray.includes(cb.value);
+                            });
+                    } catch (e) {
+                        console.error(
+                            "保存された設定の読み込みに失敗しました",
+                            e
+                        );
+                    }
+                }
+
+                // 3. チェックボックス変更時に自動保存するイベントを追加 (追加)
+                document.querySelectorAll(".diff-check").forEach((cb) => {
+                    cb.addEventListener("change", saveCheckboxState);
+                });
             });
+
+            // チェックボックスの状態を localStorage に保存する関数 (追加)
+            function saveCheckboxState() {
+                const checkedDiffs = Array.from(
+                    document.querySelectorAll(".diff-check:checked")
+                ).map((cb) => cb.value);
+                localStorage.setItem(
+                    "awc_selected_diffs",
+                    JSON.stringify(checkedDiffs)
+                );
+            }
             // スライダーの数値をリアルタイムに表示
             document
                 .getElementById("pick-count")
