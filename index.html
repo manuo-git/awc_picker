@@ -267,6 +267,11 @@
                 document.querySelectorAll(".diff-check").forEach((cb) => {
                     cb.addEventListener("change", saveCheckboxState);
                 });
+
+                // 4. 初期表示の ??? の数をスライダーの値に合わせる (追加)
+                const initialPickCount =
+                    document.getElementById("pick-count").value;
+                updatePickCountDisplay(initialPickCount);
             });
 
             // チェックボックスの状態を localStorage に保存する関数 (追加)
@@ -285,6 +290,26 @@
                 .addEventListener("input", (e) => {
                     document.getElementById("pick-count-display").textContent =
                         e.target.value;
+                });
+
+            // スライダーの数値をリアルタイムに表示し、結果表示の ??? も連動させる関数
+            function updatePickCountDisplay(count) {
+                document.getElementById("pick-count-display").textContent =
+                    count;
+
+                // ルーレットを回す前の初期状態（???）の数を問題数に合わせる
+                const resultDisplay = document.getElementById("result-display");
+                const questionMarks = Array(parseInt(count, 10)).fill("???");
+                resultDisplay.innerHTML = questionMarks
+                    .map((q) => `<div>${q}</div>`)
+                    .join("");
+            }
+
+            // スライダー変更時のイベント
+            document
+                .getElementById("pick-count")
+                .addEventListener("input", (e) => {
+                    updatePickCountDisplay(e.target.value);
                 });
             document
                 .getElementById("spin-btn")
