@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWC Roulette</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7f9fc;
+      color: #333;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-top: 0;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .checkbox-group label {
+      display: inline-block;
+      font-weight: normal;
+      margin-right: 15px;
+      cursor: pointer;
+    }
+    input[type="number"] {
+      width: 100px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: vertical;
+      font-family: monospace;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    .result-box {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #ecf0f1;
+      border-radius: 8px;
+      text-align: center;
+      min-height: 40px;
+    }
+    .result-text {
+      font-size: 2em;
+      font-weight: bold;
+      color: #e74c3c;
+      margin: 0;
+    }
+    .help-text {
+      font-size: 0.85em;
+      color: #7f8c8d;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>AWC Roulette</h1>
+
+    <div class="form-group">
+      <label>ピックする問題:</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" class="diff-check" value="A" checked> A</label>
+        <label><input type="checkbox" class="diff-check" value="B" checked> B</label>
+        <label><input type="checkbox" class="diff-check" value="C" checked> C</label>
+        <label><input type="checkbox" class="diff-check" value="D" checked> D</label>
+        <label><input type="checkbox" class="diff-check" value="E" checked> E</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="max-contest">最大のコンテスト番号:</label>
+      <input type="number" id="max-contest" value="133" min="1">
+      <div class="help-text">例: 133 と入力すると AWC0001〜AWC0133 が対象になります</div>
+    </div>
+
+    <div class="form-group">
+      <label for="exclusions">除外設定:</label>
+      <textarea id="exclusions" rows="4" placeholder="[100 *]&#10;[108 d]"></textarea>
+      <div class="help-text">書式: [コンテスト番号 問題] (※大文字小文字は区別しません)</div>
+    </div>
+
+    <button id="spin-btn">ルーレットを回す</button>
+
+    <div class="result-box">
+      <p class="result-text" id="result-display">???</p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('spin-btn').addEventListener('click', () => {
+      // 1. 設定値の取得
+      const checkedDiffs = Array.from(document.querySelectorAll('.diff-check:checked')).map(cb => cb.value);
+      const maxContestNum = parseInt(document.getElementById('max-contest').value, 10);
+      const exclusionsText = document.getElementById('exclusions').value;
+
+      if (checkedDiffs.length === 0) {
+        alert('少なくとも1つの問題（A〜E）にチェックを入れてください。');
+        return;
+      }
+      if (isNaN(maxContestNum) || maxContestNum < 1) {
+        alert('正しいコンテスト番号を入力してください。');
+        return;
+      }
+
+      // 2. 除外コマンドのパース処理
+      // 例: "[100 *]" や "[108 d]" を抽出
+      const exclusions = {};
+      const regex = /\[\s*(\d+)\s+([a-zA-Z\*])\s*\]/g;
+      let match;
+      while ((match = regex.exec(exclusionsText)) !== null) {
+        const contestNum = parseInt(match[1], 10);
+        const targetStr = match[2].toUpperCase(); // d を D に変換して統一
+        
+        if (!exclusions[contestNum]) {
+          exclusions[contestNum] = [];
+        }
+        exclusions[contestNum].push(targetStr);
+      }
+
+      // 3. 抽選プールの作成
+      const pool = [];
+      for (let i = 1; i <= maxContestNum; i++) {
+        // [100 *] のように、その回全体が除外されているかチェック
+        if (exclusions[i] && exclusions[i].includes('*')) {
+          continue;
+        }
+
+        // 選択された各問題(A~E)についてプールに追加できるかチェック
+        for (let diff of checkedDiffs) {
+          // [108 D] のように、特定の回の特定の問題が除外されているかチェック
+          if (exclusions[i] && exclusions[i].includes(diff)) {
+            continue;
+          }
+          
+          // 4桁のゼロ埋めを作成 (例: 133 -> 0133)
+          const numStr = String(i).padStart(4, '0');
+          pool.push(`AWC${numStr} ${diff}`);
+        }
+      }
+
+      if (pool.length === 0) {
+        alert('条件に合致する問題がありません。設定を見直してください。');
+        return;
+      }
+
+      // 4. ルーレット演出
+      const resultDisplay = document.getElementById('result-display');
+      const button = document.getElementById('spin-btn');
+      button.disabled = true; // 演出中はボタンを無効化
+
+      let count = 0;
+      const maxCount = 20; // 切り替わる回数
+      
+      const interval = setInterval(() => {
+        const randomIndex = Math.floor(Math.random() * pool.length);
+        resultDisplay.textContent = pool[randomIndex];
+        count++;
+
+        if (count > maxCount) {
+          clearInterval(interval);
+          // 最終的な結果を決定
+          const finalIndex = Math.floor(Math.random() * pool.length);
+          resultDisplay.textContent = pool[finalIndex];
+          button.disabled = false;
+        }
+      }, 50); // 50ミリ秒ごとに切り替え
+    });
+  </script>
+</body>
+</html>
