@@ -204,18 +204,39 @@
 
             function calculateCurrentAWC() {
                 const now = new Date();
-                let count = 0;
-                let cur = new Date(START_DATE);
 
-                // 開始日から今日までの「平日（月〜金）」の数をカウント
-                while (cur <= now) {
-                    const day = cur.getDay();
-                    if (day !== 0 && day !== 6) {
-                        // 土日を除外
-                        count++;
-                    }
-                    cur.setDate(cur.getDate() + 1);
+                // START_DATE（月曜）から「今日」の0:00までの日数差を計算
+                const start0 = new Date(
+                    START_DATE.getFullYear(),
+                    START_DATE.getMonth(),
+                    START_DATE.getDate()
+                );
+                const today0 = new Date(
+                    now.getFullYear(),
+                    now.getMonth(),
+                    now.getDate()
+                );
+
+                const diffDays = Math.floor(
+                    (today0 - start0) / (1000 * 60 * 60 * 24)
+                );
+                if (diffDays < 0) return 1;
+
+                // 完全な週（7日）の数と、余りの日数を計算
+                const fullWeeks = Math.floor(diffDays / 7);
+                const remainingDays = diffDays % 7; // 0:月, 1:火, 2:水, 3:木, 4:金, 5:土, 6:日
+
+                // 1. 過去の完全な週に含まれる平日数（1週あたり5日）
+                let count = fullWeeks * 5;
+
+                // 2. 今週の余り日数に含まれる過去の平日数（最大で月〜金までの5日）
+                count += Math.min(remainingDays, 5);
+
+                // 3. 今日が平日（月〜金: remainingDays 0〜4）かつ 21:00 以降なら今日の分を追加
+                if (remainingDays < 5 && now.getHours() >= 21) {
+                    count++;
                 }
+
                 return count > 0 ? count : 1;
             }
 
