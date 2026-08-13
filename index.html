@@ -268,7 +268,14 @@
                     cb.addEventListener("change", saveCheckboxState);
                 });
 
-                // 4. 初期表示の ??? の数をスライダーの値に合わせる (追加)
+                // 4. スライダーの値の復元（追加）
+                const savedPickCount = localStorage.getItem("awc_pick_count");
+                if (savedPickCount) {
+                    document.getElementById("pick-count").value =
+                        savedPickCount;
+                }
+
+                // 5. 表示の初期化（復元したスライダーの値をもとに表示）
                 const initialPickCount =
                     document.getElementById("pick-count").value;
                 updatePickCountDisplay(initialPickCount);
@@ -288,8 +295,12 @@
             document
                 .getElementById("pick-count")
                 .addEventListener("input", (e) => {
+                    const val = e.target.value;
                     document.getElementById("pick-count-display").textContent =
-                        e.target.value;
+                        val;
+                    updatePickCountDisplay(val);
+                    // スライダーの値を保存
+                    localStorage.setItem("awc_pick_count", val);
                 });
 
             // スライダーの数値をリアルタイムに表示し、結果表示の ??? も連動させる関数
